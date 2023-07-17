@@ -21,10 +21,10 @@ local shim = {
 }
 
 table = {
-    plenary,
-    neodev,
-    devicons,
-    shim,
+    {plenary},
+    {neodev},
+    {devicons},
+    {shim},
 }
 
 return table
