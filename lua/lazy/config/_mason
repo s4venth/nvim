@@ -1,0 +1,5 @@
+local M = {}
+
+M.main.config = {
+    require("mason").setup()
+}
