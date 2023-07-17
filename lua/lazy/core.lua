@@ -50,11 +50,20 @@ local luasnip = {
     build = "make install_jsregexp",
 }
 
+local gitsigns = {
+    "lewis6991/gitsigns.nvim",
+    event = "BufNew",
+    config = function()
+        require("gitsigns").setup()
+    end,
+}
+
 local table = {
     {treesitter},
     {cmp},
     {luasnip},
     {telescope},
+    {gitsigns},
 }
 
 return table
