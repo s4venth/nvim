@@ -1,3 +1,5 @@
+Nvim.plugins.core = os.getenv("LOCALAPPDATA") .. "/nvim/lua/lazy/config/core/"
+
 local treesitter = {
     "nvim-treesitter/nvim-treesitter",
     event = "VimEnter",
