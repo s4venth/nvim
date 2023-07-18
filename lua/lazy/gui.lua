@@ -1,9 +1,11 @@
+local gui = "lazy/config/gui/"
+
 local statusline = {
     "nvim-lualine/lualine.nvim",
     event = "VimEnter",
     dependencies = {"nvim-tree/nvim-web-devicons"},
     config = function ()
-        local lualine = require("lazy/config/_lualine")
+        local lualine = require(gui .."_lualine")
         require("lualine").setup({
             options = {lualine.options},
             sections = {lualine.sections},
@@ -17,7 +19,7 @@ local tabline = {
     event = "BufNew",
     dependencies = {"nvim-tree/nvim-web-devicons"},
     config = function()
-        local bufferline = require("lazy/config/_bufferline")
+        local bufferline = require(gui .."_bufferline")
         require("bufferline").setup({
             options = {bufferline.options},
         })
@@ -27,7 +29,7 @@ local tabline = {
 local navic = {
     "SmiteshP/nvim-navic",
     config = function()
-        local navic = require("lazy/config/_nvim-navic")
+        local navic = require(gui .."_nvim-navic")
         require("nvim-navic").setup({
             icons = {navic.icons},
             lsp = {navic.lsp},
@@ -41,7 +43,7 @@ local files = {
     event = "VimEnter",
     dependencies = {"nvim-tree/nvim-web-devicons"},
     init = function()
-        local tree = require("lazy/config/_nvim-tree")
+        local tree = require(gui .."_nvim-tree")
         require("nvim-tree").setup({
             tree.misc,
         })

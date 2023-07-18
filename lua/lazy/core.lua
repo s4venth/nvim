@@ -1,4 +1,4 @@
-Nvim.plugins.core = os.getenv("LOCALAPPDATA") .. "/nvim/lua/lazy/config/core/"
+local core = os.getenv("LOCALAPPDATA") .. "/nvim/lua/lazy/config/core/"
 
 local treesitter = {
     "nvim-treesitter/nvim-treesitter",
@@ -6,7 +6,7 @@ local treesitter = {
     build = ":TSUpdate",
     dependencies = {"JoosepAlviste/nvim-ts-context-commentstring"},
     config = function()
-        local treesitter = require("_treesitter.lua")
+        local treesitter = require(core .. "_treesitter.lua")
         require("nvim-treesitter.configs").setup({
             treesitter.config
         })
@@ -22,7 +22,7 @@ local telescope = {
         "nvim-telescope/telescope-fzf-native.nvim"
     },
     config = function()
-        local telescope = require("lazy/config/_telescope")
+        local telescope = require(core .."/_telescope")
         telescope.config()
         telescope.fzf()
     end,
@@ -42,7 +42,7 @@ local cmp = {
         "hrsh7th/nvim-cmp",
     },
     config = function()
-        require("lazy/config/_cmp")
+        require(core .. "_cmp")
     end,
 }
 

@@ -1,7 +1,7 @@
 local M = {}
 
-M.config = {
+function M.config()
     require("mason").setup()
-}
+end
 
 return M
