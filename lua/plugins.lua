@@ -49,12 +49,7 @@ _file("lazy/dependencies")
 _file("lazy/themes")
 _file("lazy/lsp")
 _file("lazy/cmp")
-_file("lazy/treesitter")
-_file("lazy/debug")
+_file("lazy/core")
 _file("lazy/gui")
-_file("lazy/conveniance")
-_file("lazy/telescope")
-_file("lazy/terminal")
-_file("lazy/git_tools")
 
 return all_plugins

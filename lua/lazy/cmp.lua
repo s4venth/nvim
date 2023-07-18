@@ -14,23 +14,8 @@ return {
             "hrsh7th/nvim-cmp",
         },
         config = function()
-            require("lazy/configs/cmp-config")
+            require("lazy/configs/cmp_config")
         end
-    },
-
-    {
-        "hrsh7th/cmp-buffer",
-        lazy = true,
-    },
-
-    {
-        "hrsh7th/cmp-path",
-        lazy = true,
-    },
-
-    {
-        "saadparwaiz1/cmp_luasnip",
-        lazy = true,
     },
 
     {
@@ -39,15 +24,10 @@ return {
         version = "*",
         build = "make install_jsregexp",
     },
-
+    
     {
-        "hrsh7th/nvim-cmp",
-        lazy = true,
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        opts = {},
     },
-
-    {
-        "onsails/lspkind.nvim",
-        lazy = true,
-    },
-
 }

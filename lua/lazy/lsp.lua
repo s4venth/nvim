@@ -1,3 +1,5 @@
+local lsp = require("lazy/configs/lsp_config")
+
 return {
     {
         "williamboman/mason.nvim",
@@ -19,13 +21,7 @@ return {
             "nvim-lua/plenary.nvim",
         },
         init = function()
-            local null_ls = require("null-ls")
-            null_ls.setup({
-                sources = {
-                    null_ls.builtins.formatting.stylua,
-                    null_ls.builtins.diagnostics.eslint,
-                },
-            })
+            lsp.null_ls()
         end,
     },
 
@@ -38,7 +34,18 @@ return {
     },
 
     {
-        "neovim/nvim-lspconfig",
-        lazy = true,
+        "rcarriga/nvim-dap-ui",
+        event = "BufNew",
+        dependencies = {
+            "mfussenegger/nvim-dap",
+        },
+    },
+
+    {
+        "lewis6991/gitsigns.nvim",
+        event = "BufNew",
+        config = function()
+            require("gitsigns").setup()
+        end,
     },
 }

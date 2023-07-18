@@ -15,10 +15,4 @@ return {
         "nvim-tree/nvim-web-devicons",
         lazy = true,
     },
-
-    {
-        "equalsraf/neovim-gui-shim",
-        lazy = false,
-        priority = 1000,
-    },
 }
