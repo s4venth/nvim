@@ -1,99 +1,115 @@
-local gui = "lazy/config/gui/"
+return {
+    {
+        "nvim-lualine/lualine.nvim",
+        event = "VimEnter",
+        config = function()
+            require("lualine").setup({
+                options = {
+                    theme = 'auto',
+                    component_separators = {left = '-', right = '-'},
+                    section_separators = {left = '', right = ''},
+                    disabled_filetypes = {
+                        statusline = {},
+                        winbar = {},
+                        NvimTree = {},
+                    },
+                },
+                sections = {
+                    lualine_a = {'mode'},
+                    lualine_b = {'branch', 'diff', 'diagnostics'},
+                    lualine_c = {'filename'},
+                    lualine_x = {'filetype'},
+                    lualine_y = {'progress'},
+                    lualine_z = {'location'},
+                },
+                extensions = {'nvim-tree'}
+            })
+        end,
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+        },
+    },
 
-local statusline = {
-    "nvim-lualine/lualine.nvim",
-    event = "VimEnter",
-    dependencies = {"nvim-tree/nvim-web-devicons"},
-    config = function ()
-        local lualine = require(gui .."_lualine")
-        require("lualine").setup({
-            options = {lualine.options},
-            sections = {lualine.sections},
-            inactive_sections = {lualine.inactive_sections},
-        })
-    end
+    {
+        "akinsho/bufferline.nvim",
+        enabled = true,
+        event = "BufNew",
+        config = function()
+            vim.opt.termguicolors = true
+            require("bufferline").setup{
+                options = {
+                    --highlights = require("catppuccin.groups.integrations.bufferline").get(),
+                    style_preset = {
+                        require("bufferline").style_preset.no_italic,
+                        require("bufferline").style_preset.no_bold
+                    },
+                    indicator = {
+                        icon = '@',
+                        style = 'icon',
+                    },
+                    diagnostics = "nvim_lsp",
+                    offsets = {
+                        {
+                            filetype = "NvimTree",
+                            text = "File Explorer",
+                            text_align = "center",
+                            separator = true,
+                        }
+                    },
+                    separator_style = "thick",
+                }
+            }
+        end,
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+        },
+    },
+
+    {
+        "goolord/alpha-nvim",
+        event = "VimEnter",
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+        },
+        config = function()
+            require("alpha").setup(require("alpha.themes.startify").config)
+        end,
+    },
+
+    {
+        "SmiteshP/nvim-navic",
+        config = function ()
+            require("nvim-navic").setup({
+                lsp = {
+                    auto_attach = true,
+                },
+                safe_output = true,
+            })
+        end,
+    },
+
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        init = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+        end,
+        opts = {}
+    },
+
+    {
+        "nvim-tree/nvim-tree.lua",
+        version = "*",
+        lazy = false,
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+        },
+        init = function()
+            require("nvim-tree").setup({
+                auto_reload_on_write = true,
+                sort_by = "filetype",
+            })
+        end,
+    },
 }
-
-local tabline = {
-    "akinsho/bufferline.nvim",
-    event = "BufNew",
-    dependencies = {"nvim-tree/nvim-web-devicons"},
-    config = function()
-        local bufferline = require(gui .."_bufferline")
-        require("bufferline").setup({
-            options = {bufferline.options},
-        })
-    end
-}
-
-local navic = {
-    "SmiteshP/nvim-navic",
-    config = function()
-        local navic = require(gui .."_nvim-navic")
-        require("nvim-navic").setup({
-            icons = {navic.icons},
-            lsp = {navic.lsp},
-            navic.misc,
-        })
-    end,
-}
-
-local files = {
-    "nvim-tree/nvim-tree.lua",
-    event = "VimEnter",
-    dependencies = {"nvim-tree/nvim-web-devicons"},
-    init = function()
-        local tree = require(gui .."_nvim-tree")
-        require("nvim-tree").setup({
-            tree.misc,
-        })
-    end,
-}
-
-local keyhelp = {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    init = function()
-        vim.o.timeout = true
-        vim.o.timeoutlen = 300
-    end,
-}
-
-local greeter = {
-    "goolord/alpha-nvim",
-    event = "VimEnter",
-    dependencies = {"nvim-tree/nvim-web-devicons"},
-    config = function()
-        require("alpha").setup(require("alpha.themes.startify").config)
-    end,
-}
-
-local autopairs = {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {},
-}
-
-local indent = {
-    "lukas-reineke/indent-blankline.nvim",
-    event = "InsertEnter",
-    config = function()
-        require("indent_blankline").setup {
-            show_current_context = true,
-            show_current_context_start = false,
-        }
-    end,
-}
-
-local table = {
-    {statusline},
-    {tabline},
-    {navic},
-    {files},
-    {keyhelp},
-    {greeter},
-    {autopairs},
-    {indent},
-}
-
-return table

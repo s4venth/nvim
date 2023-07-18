@@ -1,38 +1,44 @@
-local lsp = "lazy/config/lsp/"
+return {
+    {
+        "williamboman/mason.nvim",
+        lazy = false,
+        event = "VimEnter",
+        config = function()
+            require("mason").setup()
+        end,
+        dependencies = {
+            "williamboman/mason-lspconfig.nvim",
+            "jose-elias-alvarez/null-ls.nvim",
+        }
+    },
 
-local mason = {
-    "williamboman/mason.nvim",
-    event = "VimEnter",
-    config = function()
-        local mason = require(lsp .."_mason")
-        mason.config()
-    end,
+    {
+        "jose-elias-alvarez/null-ls.nvim",
+        event = "VimEnter",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        init = function()
+            local null_ls = require("null-ls")
+            null_ls.setup({
+                sources = {
+                    null_ls.builtins.formatting.stylua,
+                    null_ls.builtins.diagnostics.eslint,
+                },
+            })
+        end,
+    },
+
+    {
+        "williamboman/mason-lspconfig.nvim",
+        lazy = true,
+        dependencies = {
+            "neovim/nvim-lspconfig",
+        }
+    },
+
+    {
+        "neovim/nvim-lspconfig",
+        lazy = true,
+    },
 }
-
-local null_ls = {
-    "jose-elias-alvarez/null-ls.nvim",
-    lazy = true,
-    init = function()
-        local null_ls = require(lsp .."_null_ls")
-        null_ls.init()
-    end
-}
-
-local mason_cfg = {
-    "williamboman/mason-lspconfig.nvim",
-    lazy = true,
-}
-
-local lspconfig = {
-    "neovim/nvim-lspconfig",
-    lazy = true,
-}
-
-local table = {
-    {mason},
-    {null_ls},
-    {mason_cfg},
-    {lspconfig},
-}
-
-return table
