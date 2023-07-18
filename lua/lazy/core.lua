@@ -60,12 +60,36 @@ local gitsigns = {
     end,
 }
 
+local term = {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    opts = {
+        require(core .."_term").opts
+    },
+}
+
+local dap = {
+    "mfussenegger/nvim-dap",
+    lazy = true,
+}
+
+local dap_ui = {
+    "rcarriga/nvim-dap-ui",
+    event = "VimEnter",
+    dependencies = {
+        "mfussenegger/nvim-dap",
+    },
+}
+
 local table = {
     {treesitter},
     {cmp},
     {luasnip},
     {telescope},
     {gitsigns},
+    {term},
+    {dap},
+    {dap_ui},
 }
 
 return table

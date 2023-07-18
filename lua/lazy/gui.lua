@@ -68,6 +68,23 @@ local greeter = {
     end,
 }
 
+local autopairs = {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    opts = {},
+}
+
+local indent = {
+    "lukas-reineke/indent-blankline.nvim",
+    event = "InsertEnter",
+    config = function()
+        require("indent_blankline").setup {
+            show_current_context = true,
+            show_current_context_start = false,
+        }
+    end,
+}
+
 local table = {
     {statusline},
     {tabline},
@@ -75,6 +92,8 @@ local table = {
     {files},
     {keyhelp},
     {greeter},
+    {autopairs},
+    {indent},
 }
 
 return table
