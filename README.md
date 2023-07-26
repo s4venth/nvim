@@ -1,5 +1,10 @@
-# nvim
+# !! My Nvim config !!
 My personal Neovim config
+
+## Why?
+I really liked the experience using LunarVim, but found the customization of it needlessly complicated.
+As such, I decided to go with my own config with largely the same plugins, but with simpler customization
+and less abstraction.
 
 ## Dependencies
 The dependencies are:
