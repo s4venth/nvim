@@ -91,3 +91,7 @@ require('lspconfig')['asm_lsp'].setup {
     capabilities = _capabilities,
     on_attach = on_attach,
 }
+require('lspconfig')['hls'].setup {
+    capabilities = _capabilities,
+    on_attach = on_attach,
+}

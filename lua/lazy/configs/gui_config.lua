@@ -1,3 +1,20 @@
+local function lsp_name()
+    local msg = 'No Active Lsp'
+    local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
+    local clients = vim.lsp.get_active_clients()
+    if next(clients) == nil then 
+        return msg
+    end
+
+    for _, client in ipairs(clients) do
+        local filetypes = client.config.filetypes
+        if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+            return "Active Lsp: " .. client.name
+        end
+    end
+    return msg
+end
+
 local M = {}
 
 function M.lualine()
@@ -10,15 +27,24 @@ function M.lualine()
                 statusline = {},
                 winbar = {},
                 NvimTree = {},
+                ToggleTerm = {},
             }
         },
         sections = {
                 lualine_a = {'mode'},
                 lualine_b = {'branch', 'diff', 'diagnostics'},
-                lualine_c = {'filename'},
-                lualine_x = {'filetype'},
-                lualine_y = {'progress'},
-                lualine_z = {'location'},
+                lualine_c = {
+                    {
+                        "navic",
+                        color_correction = "static",
+                        navic_opts = {
+                            highlight = true,
+                        }
+                    }
+                },
+                lualine_x = {lsp_name},
+                lualine_y = {'filetype'},
+                lualine_z = {'location', 'progress'},
             },
         extensions = {'nvim-tree'}
     })
@@ -34,7 +60,7 @@ function M.bufferline()
                 require("bufferline").style_preset.no_bold
             },
             indicator = {
-                icon = '@',
+                icon = ' ',
                 style = 'icon',
             },
             diagnostics = "nvim_lsp",
@@ -61,7 +87,7 @@ function M.navic()
 end
 
 function M.alpha()
-    require("alpha").setup(require("alpha.themes.startify").config)
+    require("alpha").setup(require("alpha.themes.theta").config)
 end
 
 function M.which_key()
