@@ -1,4 +1,4 @@
-local core = require("lazy/configs/core_config")
+local core = require("plugins.configs.core")
 
 return {
     {
@@ -15,11 +15,12 @@ return {
 
     {
         "akinsho/toggleterm.nvim",
+        event = "VeryLazy",
         config = function()
             core.term()
         end
     },
-    
+
     {
         "nvim-telescope/telescope.nvim",
         tag = "0.1.2",

@@ -51,6 +51,7 @@ cmp.setup.cmdline(':', {
     })
 })
 
+
 local navic = require("nvim-navic")
 
 local on_attach = function (client, bufnr)

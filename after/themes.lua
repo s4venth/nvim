@@ -1,11 +1,9 @@
-local themes = require("lazy/configs/themes_config")
+local themes = require("plugins.configs.themes")
 
 return {
     {
         "Yazeed1s/minimal.nvim",
-        enabled = false,
-        lazy = false,
-        priority = 1000,
+        lazy = true,
         config = function()
             vim.cmd[[colorscheme minimal]]
         end
@@ -13,16 +11,12 @@ return {
 
     {
         "RRethy/nvim-base16",
-        enabled = false,
-        lazy = false,
-        priority = 1000,
+        lazy = true,
     },
 
     {
         "ramojus/mellifluous.nvim",
-        enabled = true,
-        lazy = false,
-        priority = 1000,
+        lazy = true,
         config = function()
             themes.mellifluous()
         end
@@ -30,7 +24,7 @@ return {
 
     {
         "nyoom-engineering/oxocarbon.nvim",
-        enabled = false,
+        lazy = true,
         config = function()
             vim.cmd[[colorscheme oxocarbon]]
         end
@@ -38,9 +32,8 @@ return {
 
     {
         "catppuccin/nvim",
-        enabled = false,
+        lazy = true,
         name = "catppuccin",
-        priority = 1000,
         config = function()
             themes.catppuccin()
         end
@@ -48,9 +41,7 @@ return {
 
     {
         "folke/tokyonight.nvim",
-        enabled = false,
-        lazy = false,
-        priority = 1000,
+        lazy = true,
         config = function()
             vim.cmd[[colorscheme tokyonight-night]]
         end,

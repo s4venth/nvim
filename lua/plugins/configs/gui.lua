@@ -1,3 +1,5 @@
+-- This function displays active lsp in lualine 
+-- lifted from evil_lualine
 local function lsp_name()
     local msg = 'No Active Lsp'
     local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
@@ -27,7 +29,7 @@ function M.lualine()
                 statusline = {},
                 winbar = {},
                 NvimTree = {},
-                ToggleTerm = {},
+                terminal = {},
             }
         },
         sections = {
@@ -43,8 +45,8 @@ function M.lualine()
                     }
                 },
                 lualine_x = {lsp_name},
-                lualine_y = {'filetype'},
-                lualine_z = {'location', 'progress'},
+                lualine_y = {'filetype', 'progress'},
+                lualine_z = {'location'},
             },
         extensions = {'nvim-tree'}
     })
@@ -69,10 +71,10 @@ function M.bufferline()
                     filetype = "NvimTree",
                     text = "File Explorer",
                     text_align = "center",
-                    separator = true,
+                    separator = false,
                 }
             },
-            separator_style = "thick",
+            separator_style = "slope",
         },
     })
 end
