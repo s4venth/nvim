@@ -58,7 +58,25 @@ function M.powershell()
     end
 end
 
+function M.autocmd()
+    local augroup = vim.api.nvim_create_augroup
+    local autocmd = vim.api.nvim_create_autocmd
+
+    autocmd("BufEnter", { -- BufNew or BufAdd do not work properly with Alpha.nvim; first file entered does not envoke either
+        desc = "Tells Neovim to treat .z80 files as nasm files (for TS highlighting)",
+        pattern = "*",
+        group = augroup("z80_to_nasm", {clear = true}),
+        callback = function ()
+            if vim.fn.expand("%:e") == "z80" then
+                vim.cmd[[:set filetype=nasm]]
+            end
+        end
+    })
+
+end
+
 function M.all()
+    M.autocmd()
     M.mappings()
     M.settings()
 end

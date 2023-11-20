@@ -1,3 +1,5 @@
+---@diagnostic disable: unused-function
+---@diagnostic disable: unused-local
 local M = {}
 
 
@@ -164,6 +166,10 @@ function M.cmp()
                 require('luasnip').lsp_expand(args.body)
             end,
         },
+        border = {
+            completion = true,
+            documentation = true,
+        },
         formatting = {
             format = lspkind.cmp_format({
                 nvim_lsp = "[LSP]",
@@ -173,7 +179,8 @@ function M.cmp()
             })
         },
         window = {
-            documentation = cmp.config.window.bordered()
+            documentation = cmp.config.window.bordered(),
+            completion = cmp.config.window.bordered(),
         },
         mapping = {
             ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -381,19 +388,18 @@ function M.bufferline()
                 style = 'underline',
             },
             style_preset = {
-                require("bufferline").style_preset.no_italic,
-                require("bufferline").style_preset.no_bold
+                require("bufferline").style_preset.minimal,
             },
             offsets = {
                 {
                     filetype = "NvimTree",
                     text = "File Explorer",
                     text_align = "center",
-                    separator = false,
+                    separator = true,
                 }
             },
             color_icons = false,
-            separator_style = "thick",
+            separator_style = {'', ''},
         },
     })
 end
@@ -414,7 +420,7 @@ end
 function M.Nvim_tree()
     require("nvim-tree").setup({
         view = {
-            width = 15,
+            width = 25,
         },
         auto_reload_on_write = true,
         sort_by = "filetype",
