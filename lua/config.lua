@@ -220,12 +220,23 @@ function M.cmp()
         })
     })
 
-    local _capabilities = require('cmp_nvim_lsp').default_capabilities()
-    require('lspconfig')['clangd'].setup {
-        on_attach = on_attach,
-        capabilities = _capabilities
-    }
-    require('lspconfig').lua_ls.setup({
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+    ---@param client string
+    ---@param opts table
+    local function lsp_setup(client, opts)
+        local full = {
+            capabilities = capabilities,
+            on_attach = on_attach
+        }
+        for _,v in ipairs(opts) do
+            table.insert(full, v)
+        end
+        require('lspconfig')[client].setup(full)
+    end
+
+    lsp_setup('clangd', {})
+    lsp_setup('lua_ls', {
         on_attach = on_attach,
         settings = {
             Lua = {
@@ -240,28 +251,14 @@ function M.cmp()
             }
         },
     })
-    require('lspconfig')['bashls'].setup {
-        capabilities = _capabilities,
-        on_attach = on_attach,
-    }
-    require('lspconfig')['rust_analyzer'].setup {
-        capabilities = _capabilities,
-        on_attach = on_attach,
-    }
-    require('lspconfig')['asm_lsp'].setup {
-        capabilities = _capabilities,
-        on_attach = on_attach,
-    }
-    require'lspconfig'.hls.setup {
-        on_attach = on_attach,
-    }
-    require'lspconfig'.cssls.setup {
-        capabilities = _capabilities,
-        on_attach = on_attach,
-    }
-    require'lspconfig'.gopls.setup {
+    lsp_setup('bashls',        {})
+    lsp_setup('rust_analyzer', {})
+    lsp_setup('asm_lsp',       {})
+    lsp_setup('hls',           {})
+    lsp_setup('cssls',         {})
+    lsp_setup('gopls',         {
         cmd = {'gopls'},
-        capabilities = _capabilities,
+        capabilities = capabilities,
         on_attach = on_attach,
         settings = {
             gopls = {
@@ -276,7 +273,7 @@ function M.cmp()
         init_options = {
             usePlaceholders = true,
         }
-    }
+    })
 end
 
 local function pad()
