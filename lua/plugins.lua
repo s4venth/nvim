@@ -1,7 +1,6 @@
 local config = require("config")
 local M = {}
 
--- @gui
 M.gui =  {
     {
         "lukas-reineke/indent-blankline.nvim",
@@ -81,7 +80,6 @@ M.gui =  {
     },
 }
 
--- @core
 M.core = {
     {
         "nvim-treesitter/nvim-treesitter",
@@ -117,8 +115,6 @@ M.core = {
     },
 }
 
-
--- @lsp
 M.lsp =  {
     {
         "williamboman/mason.nvim",
@@ -181,6 +177,13 @@ M.lsp =  {
         config = function()
             require("trouble").setup()
         end,
+    },
+    {
+        "simrat39/rust-tools.nvim",
+        lazy = true,
+        config = function ()
+            config.rust_tools()
+        end
     },
 }
 

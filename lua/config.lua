@@ -10,7 +10,7 @@ local on_attach = function (client, bufnr)
     end
 end
 
-local function lsp_name()
+local function lsp_name() -- lifted from evil_lualine
     local msg = 'No Active Lsp'
     local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
     local clients = vim.lsp.get_active_clients()
@@ -25,10 +25,6 @@ local function lsp_name()
         end
     end
     return msg
-end
-
-local function lmao()
-    return '%='
 end
 
 function M.minimal()
@@ -108,6 +104,17 @@ end
 
 function M.rust_tools()
     require("rust-tools").setup({
+        tools = {
+            runnables = {
+                use_telescope = true,
+            }
+        },
+        inlay_hints = {
+            auto = true,
+            show_parameter_hints = false,
+            parameter_hints_prefix = "",
+            other_hints_prefix = "",
+        },
         server = {
             on_attach = on_attach,
         },
@@ -116,11 +123,10 @@ end
 
 function M.mason()
     require("mason-lspconfig").setup({
-    ensure_installed = {
+        ensure_installed = {
             "lua_ls",
             "rust_analyzer",
             "clangd",
-            "hls",
         },
     })
 end
@@ -192,8 +198,11 @@ function M.cmp()
             ['<Up>'] = cmp.mapping.select_prev_item(cmp_select),
         },
         sources = cmp.config.sources({
-            {name = 'nvim_lsp',},
-            {name = 'luasnip'}, }, {
+            {name = 'nvim_lsp_signature_help'},
+            {name = 'path'},
+            {name = 'nvim_lua'},
+            {name = 'nvim_lsp'},
+            {name = 'luasnip'},
             {name = 'buffer'}
         }),
     })
@@ -235,7 +244,7 @@ function M.cmp()
         require('lspconfig')[client].setup(full)
     end
 
-    lsp_setup('clangd', {})
+    lsp_setup('clangd',{})
     lsp_setup('lua_ls', {
         on_attach = on_attach,
         settings = {
@@ -251,12 +260,18 @@ function M.cmp()
             }
         },
     })
-    lsp_setup('bashls',        {})
-    lsp_setup('rust_analyzer', {})
-    lsp_setup('asm_lsp',       {})
-    lsp_setup('hls',           {})
-    lsp_setup('cssls',         {})
-    lsp_setup('gopls',         {
+    lsp_setup('rust_analyzer',{
+        settings = {
+            ['rust_analyzer'] = {
+                capabilities = capabilities,
+                on_attach = on_attach,
+        }}
+    })
+    lsp_setup('bashls',{})
+    lsp_setup('asm_lsp',{})
+    lsp_setup('hls',{})
+    lsp_setup('cssls',{})
+    lsp_setup('gopls',{
         cmd = {'gopls'},
         capabilities = capabilities,
         on_attach = on_attach,

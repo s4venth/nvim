@@ -42,6 +42,8 @@ function M.settings()
 
     vim.opt.undofile = true              -- Stores history into a file so you can undo edits from later sessions
     vim.opt.undodir = vim.fn.stdpath("data").."/undodir" -- Path of undofile
+
+    vim.o.completeopt = "menuone,noinsert,noselect"
 end
 
 function M.powershell()
