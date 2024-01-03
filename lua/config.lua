@@ -87,7 +87,7 @@ function M.catppuccin()
             mason = true,
             navic = { enabled = true},
             illuminate = true,
-            which_key = true,
+            which_key = false,
         },
     })
     vim.cmd[[colorscheme catppuccin]]
@@ -297,7 +297,7 @@ end
 function M.lualine()
     require("lualine").setup({
         options = {
-            theme = 'monochrome',
+            theme = 'auto',
             component_separators = {left = '', right = ''},
             section_separators = {left = '', right = ''},
             globalstatus = true,
@@ -413,6 +413,12 @@ function M.bufferline()
             color_icons = false,
             separator_style = {'', ''},
         },
+        highlights = {
+            offset_separator = {
+                bg = "#16161e",
+                fg = "#16161e"
+            }
+        }
     })
 end
 

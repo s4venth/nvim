@@ -26,4 +26,4 @@ local spec = {
 
 require("lazy").setup(spec)
 
-vim.cmd[[colorscheme monochrome]]
+vim.cmd[[colorscheme tokyonight-night]]

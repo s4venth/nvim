@@ -24,7 +24,7 @@ function M.settings()
     vim.opt.linespace = 0
     vim.o.guifont = "Hasklug Nerd Font Mono:h14"
     vim.o.autochdir = false              -- change dir when opening a new file
-    vim.opt.wrap = false                 -- wrap long lines to next row 
+    vim.opt.wrap = true                 -- wrap long lines to next row 
     vim.opt.scrolloff = 9                -- how many lines from the cursor to begin scrolling
 
     vim.opt.tabstop = 4                  -- 4 space indenting
