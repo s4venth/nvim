@@ -4,79 +4,44 @@ local M = {}
 M.gui =  {
     {
         "lukas-reineke/indent-blankline.nvim",
+        event = "InsertEnter",
         main = "ibl",
         opts = {}
     },
-
     {
         "nvim-lualine/lualine.nvim",
-        event = "VimEnter",
-        config = function()
-            config.lualine()
-        end,
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
+        lazy = true,
+        event = "BufReadPre",
+        config = function() config.lualine() end,
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
-
     {
         "akinsho/bufferline.nvim",
-        event = "BufNew",
-        version = "*",
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
-        config = function ()
-            config.bufferline()
-        end,
+        event = "BufReadPre",
+        config = function() config.bufferline ()end,
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
-
     {
         "goolord/alpha-nvim",
-        event = "VimEnter",
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
-        config = function()
-            config.alpha()
-        end,
+        lazy = false,
+        config = function() config.alpha() end,
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
-
     {
         "SmiteshP/nvim-navic",
-        config = function()
-            config.navic()
-        end,
+        config = function() config.navic() end,
     },
     {
         "nvim-tree/nvim-tree.lua",
+        cmd = "NvimTreeToggle",
         lazy = true,
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
-        config = function()
-            config.Nvim_tree()
-        end,
+        config = function() config.Nvim_tree() end,
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
-
-    {
-        "utilyre/barbecue.nvim",
-        name = "barbecue",
-        event = "BufNew",
-        version = "*",
-        dependencies = {
-            "SmiteshP/nvim-navic",
-            "nvim-tree/nvim-web-devicons",
-        },
-        opts = {},
-    },
-
     {
         "norcalli/nvim-colorizer.lua",
         event = "VeryLazy",
-        config = function()
-            require('colorizer').setup()
-        end,
+        config = function() require('colorizer').setup() end,
     },
 }
 
@@ -85,71 +50,65 @@ M.core = {
         "nvim-treesitter/nvim-treesitter",
         event = "VimEnter",
         build = ":TSUpdate",
-        config = function()
-            config.treesitter()
-        end,
-    },
-
-    {
-        "christoomey/vim-tmux-navigator",
-        lazy = false,
+        config = function() config.treesitter() end,
     },
 
     {
         "nvim-telescope/telescope.nvim",
         tag = "0.1.2",
+        cmd = "Telescope",
         lazy = true,
+        config = function() config.telescope() end,
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "nvim-telescope/telescope-fzf-native.nvim",
+            {
+                "nvim-telescope/telescope-fzf-native.nvim",
+                build = 'make',
+                lazy = true
+            }
         },
-        config = function()
-            config.telescope()
-        end,
-    },
-
-    {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = 'make',
-        lazy = true,
     },
 }
 
-M.lsp =  {
+M.lsp = {
     {
         "williamboman/mason.nvim",
         lazy = false,
-        event = "VimEnter",
-        config = function()
-            require("mason").setup()
-        end,
+        priority = 900,
+        config = function() require("mason").setup() end,
         dependencies = {
-            "williamboman/mason-lspconfig.nvim",
+            {
+                "williamboman/mason-lspconfig.nvim",
+                lazy = true,
+                dependencies = {
+                    "neovim/nvim-lspconfig",
+                }
+            },
+            {
+                "hrsh7th/cmp-nvim-lsp",
+                lazy = true,
+                config = function() config.cmp_nvim_lsp() end
+            },
             "nvim-lua/lsp-status.nvim",
         }
     },
     {
-        "hrsh7th/cmp-nvim-lsp",
-        lazy = true,
-        event = "BufNew",
+        "hrsh7th/nvim-cmp",
+        event = "InsertEnter",
+        config = function() config.cmp() end,
         dependencies = {
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
-            "L3MON4D3/LuaSnip",
+            {
+                "L3MON4D3/LuaSnip",
+                lazy = true,
+                version = "*",
+                build = "make install_jsregexp",
+            },
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-cmdline",
             "onsails/lspkind.nvim",
-            "hrsh7th/nvim-cmp",
-        },
-        config = function()
-            config.cmp()
-        end
-    },
-    {
-        "L3MON4D3/LuaSnip",
-        event = "BufNew",
-        version = "*",
-        build = "make install_jsregexp",
+        }
     },
     {
         "windwp/nvim-autopairs",
@@ -157,116 +116,37 @@ M.lsp =  {
         opts = {},
     },
     {
-        "williamboman/mason-lspconfig.nvim",
-        lazy = true,
-        dependencies = {
-            "neovim/nvim-lspconfig",
-        }
-    },
-    {
         "lewis6991/gitsigns.nvim",
-        event = "BufNew",
-        config = function()
-            require("gitsigns").setup()
-        end,
+        event = "BufReadPre",
+        config = function() require("gitsigns").setup() end,
     },
     {
         "folke/trouble.nvim",
         lazy = true,
+        cmd = {"Trouble", "TroubleToggle"},
+        config = function() require("trouble").setup() end,
         dependencies = {"nvim-tree/nvim-web-devicons"},
-        config = function()
-            require("trouble").setup()
-        end,
-    },
-    {
-        "simrat39/rust-tools.nvim",
-        lazy = true,
-        config = function ()
-            config.rust_tools()
-        end
     },
 }
 
--- @deps
 M.deps = {
-    {
-        "nvim-lua/plenary.nvim",
-        lazy = true,
-    },
-
-    {
-        "folke/neodev.nvim",
-        lazy = true,
-        opts = {},
-    },
-
-    {
-        "nvim-tree/nvim-web-devicons",
-        lazy = true,
-    },
+    { "nvim-lua/plenary.nvim", lazy = true },
+    { "folke/neodev.nvim", lazy = true, opts = {} },
+    { "nvim-tree/nvim-web-devicons", lazy = true},
 }
 
-
-
--- @themes
 M.themes = {
-    {
-        "kdheepak/monochrome.nvim",
-        lazy = true,
-    },
-    {
-        "mcchrish/zenbones.nvim",
-        lazy = true,
-        dependencies = {
-            "rktjmp/lush.nvim"
-        },
-    },
-
-    {
-        "Yazeed1s/minimal.nvim",
-        lazy = true,
-        config = function()
-            vim.cmd[[colorscheme minimal-base16]]
-        end
-    },
-
-    {
-        "RRethy/nvim-base16",
-        lazy = true,
-    },
-
+    { "kdheepak/monochrome.nvim", lazy = true },
+    { "Yazeed1s/minimal.nvim", lazy = true },
+    { "RRethy/nvim-base16", lazy = true },
+    { "catppuccin/nvim", lazy = true, name = "catppuccin" },
+    { "folke/tokyonight.nvim", lazy = true},
+    { "nyoom-engineering/oxocarbon.nvim", lazy = true },
     {
         "ramojus/mellifluous.nvim",
         lazy = true,
-        config = function()
-            config.mellifluous()
-        end
+        config = function() config.mellifluous() end
     },
-
-    {
-        "nyoom-engineering/oxocarbon.nvim",
-        lazy = true,
-        config = function()
-            vim.cmd[[colorscheme oxocarbon]]
-        end
-    },
-
-    {
-        "catppuccin/nvim",
-        lazy = true,
-        name = "catppuccin",
-        config = function()
-            config.catppuccin()
-        end
-    },
-
-    {
-        "folke/tokyonight.nvim",
-        lazy = true,
-        config = function()
-            vim.cmd[[colorscheme tokyonight-night]]
-        end,
-    }
 }
 
 return M

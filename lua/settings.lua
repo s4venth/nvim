@@ -1,7 +1,6 @@
 local M = {}
 
--- @Mappings
-function M.mappings()
+local mappings = function ()
     vim.g.mapleader = ","
     -- Pressing <F3> in normal mode loads and opens trouble.nvim
     vim.keymap.set('n', '<F3>', function () require("trouble").toggle() end, {silent = true})
@@ -14,15 +13,13 @@ function M.mappings()
     vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 end
 
--- @Settings
-function M.settings()
+local settings = function ()
     Nvim = {}
     Nvim.path = vim.fn.stdpath("config") .."/lua/"
     vim.opt.fillchars:append {eob = " "} -- Removes '~' from empty space
     vim.g.loaded_netrw = 1               -- These are required for Nvim-Tree to
     vim.g.loaded_netrwPlugin = 1         -- function correctll
     vim.opt.linespace = 0
-    vim.o.guifont = "Hasklug Nerd Font Mono:h14"
     vim.o.autochdir = false              -- change dir when opening a new file
     vim.opt.wrap = true                 -- wrap long lines to next row 
     vim.opt.scrolloff = 9                -- how many lines from the cursor to begin scrolling
@@ -44,23 +41,10 @@ function M.settings()
     vim.opt.undodir = vim.fn.stdpath("data").."/undodir" -- Path of undofile
 
     vim.o.completeopt = "menuone,noinsert,noselect"
+    vim.o.shell = "zsh"
 end
 
-function M.powershell()
-    local powershell_options = {
-        shell = vim.fn.executable "pwsh" == 1 and "pwsh" or "powershell",
-        shellcmdflag = "-noLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;",
-        shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait",
-        shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode",
-        shellquote = "",
-        shellxquote = "",
-    }
-    for option, value in pairs(powershell_options) do
-        vim.opt[option] = value
-    end
-end
-
-function M.autocmd()
+local autocmd = function ()
     local augroup = vim.api.nvim_create_augroup
     local autocmd = vim.api.nvim_create_autocmd
 
@@ -74,12 +58,38 @@ function M.autocmd()
             end
         end
     })
-
 end
 
-function M.all()
-    M.autocmd()
-    M.mappings()
-    M.settings()
+local powershell = function ()
+    local powershell_options = {
+        shell = vim.fn.executable "pwsh" == 1 and "pwsh" or "powershell",
+        shellcmdflag = "-noLogo -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;",
+        shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait",
+        shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode",
+        shellquote = "",
+        shellxquote = "",
+    }
+    for option, value in pairs(powershell_options) do
+        vim.opt[option] = value
+    end
 end
+
+local list = {
+    ['mappings']   = mappings,
+    ['settings']   = settings,
+    ['autocmd']    = autocmd,
+    ['powershell'] = powershell
+}
+
+---Takes a table of strings and executes associated configurations
+---@param table table
+function M.enable(table)
+    for _, value in pairs(table)
+    do
+        if list[value] ~= nil then
+            list[value]()
+        end
+    end
+end
+
 return M

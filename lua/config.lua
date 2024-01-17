@@ -1,25 +1,26 @@
----@diagnostic disable: unused-function
----@diagnostic disable: unused-local
 local M = {}
 
-
+---Attaches nvim-navic to LSP running in current buffer
+---@param client string
+---@param bufnr number
 local on_attach = function (client, bufnr)
     local navic = require("nvim-navic")
-    if client.server_capabilities.documentSymbolProvider then
+    if client.server_capabilities.documentSymbolProvider then ---@diagnostic disable-line: undefined-field
         navic.attach(client, bufnr)
     end
 end
 
-local function lsp_name() -- lifted from evil_lualine
+---If current buffer has a LSP running returns "LSP: <name>", if not returns "No Active Lsp"
+---@return string
+local function lsp_name()
     local msg = 'No Active Lsp'
-    local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
-    local clients = vim.lsp.get_active_clients()
-    if next(clients) == nil then
-        return msg
-    end
+    local buf_ft = vim.api.nvim_get_option_value('filetype', {buf = 0})
+    local clients = vim.lsp.get_clients({bufnr = 0})
+
+    if next(clients) == nil then return msg end
 
     for _, client in ipairs(clients) do
-        local filetypes = client.config.filetypes
+        local filetypes = client.config.filetypes ---@diagnostic disable-line: undefined-field
         if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
             return "LSP: " .. client.name
         end
@@ -36,19 +37,9 @@ function M.mellifluous()
     require'mellifluous'.setup({
         color_set = 'tender',
         styles = {
-            comments = {},
             conditionals = {bold = true},
-            folds = {},
-            loops = {},
-            functions = {},
             keywords = {bold = true},
-            strings = {},
-            variables = {},
-            numbers = {},
             booleans = {bold = true},
-            properties = {},
-            types = {},
-            operators = {},
         },
         mellifluous = {
             neutral = true,
@@ -85,40 +76,15 @@ function M.catppuccin()
         flavour = "mocha",
         integrations = {
             mason = true,
-            navic = { enabled = true},
+            navic = {enabled = true},
             illuminate = true,
+            nvimtree = true,
+            treesitter = true,
             which_key = false,
         },
+        no_italic = true,
     })
     vim.cmd[[colorscheme catppuccin]]
-end
-
-function M.null_ls()
-    require("null-ls").setup({
-        sources = {
-            --require("null-ls").builtins.formatting.stylua,
-            --require("null-ls").builtins.diagnostics.eslint,
-        },
-    })
-end
-
-function M.rust_tools()
-    require("rust-tools").setup({
-        tools = {
-            runnables = {
-                use_telescope = true,
-            }
-        },
-        inlay_hints = {
-            auto = true,
-            show_parameter_hints = false,
-            parameter_hints_prefix = "",
-            other_hints_prefix = "",
-        },
-        server = {
-            on_attach = on_attach,
-        },
-    })
 end
 
 function M.mason()
@@ -130,6 +96,7 @@ function M.mason()
         },
     })
 end
+
 function M.treesitter()
     local configs = require("nvim-treesitter.configs")
     local ts_utils = require("nvim-treesitter.utils")
@@ -137,16 +104,10 @@ function M.treesitter()
         auto_install = false,
         modules = {},
         ignore_install = {},
-        ensure_installed = {"c", "lua", "vim", "vimdoc"},
+        ensure_installed = {"c", "rust", "lua", "vim", "vimdoc", "css", "json"},
         sync_install = false,
         highlight = {enable = true},
         indent = {enable = true},
-    })
-end
-
-function M.term()
-    require("FTerm").setup({
-        border = "double",
     })
 end
 
@@ -186,7 +147,6 @@ function M.cmp()
         },
         window = {
             documentation = cmp.config.window.bordered(),
-            completion = cmp.config.window.bordered(),
         },
         mapping = {
             ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -228,23 +188,29 @@ function M.cmp()
             {name = 'cmdline'}
         })
     })
+end
 
+function M.cmp_nvim_lsp()
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
+    ---Takes a LSP client and a table of options for it, merges it with the defaults, and then calls setup
     ---@param client string
-    ---@param opts table
+    ---@param opts table?
     local function lsp_setup(client, opts)
         local full = {
             capabilities = capabilities,
             on_attach = on_attach
         }
-        for _,v in ipairs(opts) do
-            table.insert(full, v)
+        if opts ~= nil then
+            for _,v in ipairs(opts) do
+                table.insert(full, v)
+            end
         end
         require('lspconfig')[client].setup(full)
     end
 
-    lsp_setup('clangd',{})
+    lsp_setup('clangd')
+    lsp_setup('pyright')
     lsp_setup('lua_ls', {
         on_attach = on_attach,
         settings = {
@@ -265,12 +231,12 @@ function M.cmp()
             ['rust_analyzer'] = {
                 capabilities = capabilities,
                 on_attach = on_attach,
-        }}
+            }}
     })
-    lsp_setup('bashls',{})
-    lsp_setup('asm_lsp',{})
-    lsp_setup('hls',{})
-    lsp_setup('cssls',{})
+    lsp_setup('bashls')
+    lsp_setup('asm_lsp')
+    lsp_setup('hls')
+    lsp_setup('cssls')
     lsp_setup('gopls',{
         cmd = {'gopls'},
         capabilities = capabilities,
@@ -289,15 +255,57 @@ function M.cmp()
             usePlaceholders = true,
         }
     })
+
 end
 
 local function pad()
     return ' '
 end
+
+---Returns a hard-coded lualine colorscheme
+---@return table
+local custom_theme = function()
+    ---@diagnostic disable: need-check-nil
+    local colors = require("catppuccin.palettes").get_palette "mocha"
+    local set = {
+        normal = {
+            a = {bg = colors.blue, fg = colors.base, gui = 'bold'},
+            b = {bg = colors.surface0, fg = colors.text},
+            c = {bg = colors.base, fg = colors.text}
+        },
+        insert = {
+            a = {bg = colors.green, fg = colors.base, gui = 'bold'},
+            b = {bg = colors.surface0, fg = colors.text},
+            c = {bg = colors.base, fg = colors.text}
+        },
+        visual = {
+            a = {bg = colors.yellow, fg = colors.base, gui = 'bold'},
+            b = {bg = colors.surface0, fg = colors.text},
+            c = {bg = colors.base, fg = colors.text}
+        },
+        replace = {
+            a = {bg = colors.red, fg = colors.base, gui = 'bold'},
+            b = {bg = colors.surface0, fg = colors.text},
+            c = {bg = colors.base, fg = colors.text}
+        },
+        command = {
+            a = {bg = colors.peach, fg = colors.base, gui = 'bold'},
+            b = {bg = colors.surface0, fg = colors.text},
+            c = {bg = colors.base, fg = colors.text}
+        },
+        inactive = {
+            a = {bg = colors.base, fg = colors.surface1, gui = 'bold'},
+            b = {bg = colors.base, fg = colors.surface1},
+            c = {bg = colors.base, fg = colors.surface1}
+        }
+    }
+    return set
+end
+
 function M.lualine()
     require("lualine").setup({
         options = {
-            theme = 'auto',
+            theme = custom_theme,
             component_separators = {left = '', right = ''},
             section_separators = {left = '', right = ''},
             globalstatus = true,
@@ -311,68 +319,26 @@ function M.lualine()
         },
         sections = {
             lualine_a = {
-                {
-                    pad,
-                    padding = 0,
-                }
+                { pad, padding = 0 }
             },
             lualine_b = {
-                {
-                    'filetype',
-                    icon_only = true,
-                    padding = {left = 1, right = 0},
-                },{
-                    'filename',
-                    path = 1,
-                },
+                { 'filetype', icon_only = true, padding = { left = 1, right = 0 } },
+                { 'filename', path = 1 },
             },
             lualine_c = {
                 'branch',
                 'diff'
             },
             lualine_x = {
-                {lsp_name},
+                { lsp_name },
                 'diagnostics',
             },
             lualine_y = {
-                {
-                    'progress',
-                    padding = {left = 1, right = 0},
-                },
+                { 'progress',padding = { left = 1, right = 0 } },
                 'location'
             },
             lualine_z = {
-                {pad,
-                padding = 0,}
-            },
-        },
-        inactive_sections = {
-            lualine_a = {
-                {pad}
-            },
-            lualine_b = {
-                {
-                    'filetype',
-                    icon_only = true,
-                },{
-                    'filename',
-                    path = 1,
-                },
-            },
-            lualine_c = {
-                'branch',
-                'diff'
-            },
-            lualine_x = {
-                {lsp_name},
-                'diagnostics',
-            },
-            lualine_y = {
-                'progress',
-                'location'
-            },
-            lualine_z = {
-                {pad}
+                { pad, padding = 0 }
             },
         },
         extensions = {
@@ -383,7 +349,7 @@ function M.lualine()
         }
     })
 end
----@diagnostic disable: missing-fields
+
 function M.bufferline()
     vim.opt.termguicolors = true
     require("bufferline").setup({
@@ -397,27 +363,23 @@ function M.bufferline()
             middle_mouse_command = nil,
             indicator = {
                 icon = '| ',
-                style = 'underline',
+                style = "none",
             },
             style_preset = {
-                require("bufferline").style_preset.minimal,
+                require("bufferline").style_preset.no_italic,
             },
             offsets = {
                 {
                     filetype = "NvimTree",
                     text = "File Explorer",
                     text_align = "center",
-                    separator = true,
+                    separator = false,
                 }
             },
             color_icons = false,
-            separator_style = {'', ''},
+            separator_style = {' ', ' '},
         },
         highlights = {
-            offset_separator = {
-                bg = "#16161e",
-                fg = "#16161e"
-            }
         }
     })
 end
@@ -444,11 +406,6 @@ function M.Nvim_tree()
         sort_by = "filetype",
         filters = {
             dotfiles = true,
-            custom = {
-                "^.\\{-}\\.[cert]\\{3}$",
-                "^.\\{-}\\.[key]\\{3}$",
-                "^.\\{-}pass[word]\\{1,4}.\\{-}$"
-            },
             exclude = {
                 ".local",
                 ".config"
