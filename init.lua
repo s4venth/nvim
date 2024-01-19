@@ -1,7 +1,11 @@
 local plugins = require("plugins")
-local settings = require("settings")
+local settings= require("settings")
 
-settings.all()
+settings.enable({
+    'settings',
+    'autocmd',
+    'mappings'
+})
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -26,4 +30,4 @@ local spec = {
 
 require("lazy").setup(spec)
 
-vim.cmd[[colorscheme tokyonight-night]]
+vim.cmd[[colorscheme catppuccin]]

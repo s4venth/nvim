@@ -14,14 +14,12 @@ local mappings = function ()
 end
 
 local settings = function ()
-    Nvim = {}
-    Nvim.path = vim.fn.stdpath("config") .."/lua/"
     vim.opt.fillchars:append {eob = " "} -- Removes '~' from empty space
     vim.g.loaded_netrw = 1               -- These are required for Nvim-Tree to
-    vim.g.loaded_netrwPlugin = 1         -- function correctll
+    vim.g.loaded_netrwPlugin = 1         -- function correctly
     vim.opt.linespace = 0
     vim.o.autochdir = false              -- change dir when opening a new file
-    vim.opt.wrap = true                 -- wrap long lines to next row 
+    vim.opt.wrap = true                  -- wrap long lines to next row 
     vim.opt.scrolloff = 9                -- how many lines from the cursor to begin scrolling
 
     vim.opt.tabstop = 4                  -- 4 space indenting
@@ -42,6 +40,9 @@ local settings = function ()
 
     vim.o.completeopt = "menuone,noinsert,noselect"
     vim.o.shell = "zsh"
+
+    vim.opt.title = true
+    vim.opt.titlestring = 'nvim %t'
 end
 
 local autocmd = function ()

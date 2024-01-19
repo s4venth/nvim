@@ -197,23 +197,23 @@ function M.cmp_nvim_lsp()
     ---@param client string
     ---@param opts table?
     local function lsp_setup(client, opts)
-        local full = {
+        local settings = {
             capabilities = capabilities,
-            on_attach = on_attach
+            on_attach = on_attach,
         }
         if opts ~= nil then
-            for _,v in ipairs(opts) do
-                table.insert(full, v)
+            for option, value in pairs(opts) do
+                settings[option] = value
             end
         end
-        require('lspconfig')[client].setup(full)
+        require('lspconfig')[client].setup(settings)
     end
 
     lsp_setup('clangd')
     lsp_setup('pyright')
     lsp_setup('lua_ls', {
         on_attach = on_attach,
-        settings = {
+        asettings = {
             Lua = {
                 telemetry = {enable = false},
                 workspace = {
@@ -235,7 +235,16 @@ function M.cmp_nvim_lsp()
     })
     lsp_setup('bashls')
     lsp_setup('asm_lsp')
-    lsp_setup('hls')
+    lsp_setup('hls', {
+        settings = {
+            haskell = {
+                formattingProvider = "stylish-haskell",
+                plugin = {
+                    stan = { globalOn = false }
+                }
+            }
+        }
+    })
     lsp_setup('cssls')
     lsp_setup('gopls',{
         cmd = {'gopls'},
@@ -265,6 +274,7 @@ end
 ---Returns a hard-coded lualine colorscheme
 ---@return table
 local custom_theme = function()
+    -- Not checking nil lol
     ---@diagnostic disable: need-check-nil
     local colors = require("catppuccin.palettes").get_palette "mocha"
     local set = {
