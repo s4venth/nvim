@@ -1,7 +1,7 @@
 local config = require("config")
 local M = {}
 
-M.gui =  {
+M.gui = {
   { "lukas-reineke/indent-blankline.nvim",
     event = "InsertEnter",
     main = "ibl",

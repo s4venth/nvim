@@ -22,7 +22,7 @@ local function lsp_name()
     for _, client in ipairs(clients) do
         local filetypes = client.config.filetypes ---@diagnostic disable-line: undefined-field
         if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-            return "LSP: " .. client.name
+            return "  " .. client.name
         end
     end
     return msg
@@ -125,7 +125,7 @@ end
 ---@diagnostic disable: missing-fields
 function M.cmp()
     local cmp = require('cmp')
-    local cmp_select = {behavior = cmp.SelectBehavior.select}
+    local cmp_select = { behavior = cmp.SelectBehavior.select }
     local lspkind = require('lspkind')
     cmp.setup({
         snippet = {
@@ -147,6 +147,7 @@ function M.cmp()
         },
         window = {
             documentation = cmp.config.window.bordered(),
+            completion = cmp.config.window.bordered(),
         },
         mapping = {
             ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -158,12 +159,12 @@ function M.cmp()
             ['<Up>'] = cmp.mapping.select_prev_item(cmp_select),
         },
         sources = cmp.config.sources({
-            {name = 'nvim_lsp_signature_help'},
-            {name = 'path'},
-            {name = 'nvim_lua'},
-            {name = 'nvim_lsp'},
-            {name = 'luasnip'},
-            {name = 'buffer'}
+            { name = 'nvim_lsp_signature_help' },
+            { name = 'path' },
+            { name = 'nvim_lua' },
+            { name = 'nvim_lsp' },
+            { name = 'luasnip' },
+            { name = 'buffer' }
         }),
     })
 
@@ -227,11 +228,12 @@ function M.cmp_nvim_lsp()
         },
     })
     lsp_setup('rust_analyzer',{
+        server = {
+            on_attach = on_attach,
+        },
         settings = {
-            ['rust_analyzer'] = {
-                capabilities = capabilities,
-                on_attach = on_attach,
-            }}
+            ['rust_analyzer'] = {}
+        }
     })
     lsp_setup('bashls')
     lsp_setup('asm_lsp')
@@ -245,6 +247,7 @@ function M.cmp_nvim_lsp()
             }
         }
     })
+    lsp_setup('zls')
     lsp_setup('cssls')
     lsp_setup('gopls',{
         cmd = {'gopls'},
@@ -267,46 +270,44 @@ function M.cmp_nvim_lsp()
 
 end
 
-local function pad()
-    return ' '
-end
-
 ---Returns a hard-coded lualine colorscheme
----@return table
+---If not found, returns 'auto' which is the default
+---@return table|string
 local custom_theme = function()
-    -- Not checking nil lol
-    ---@diagnostic disable: need-check-nil
     local colors = require("catppuccin.palettes").get_palette "mocha"
+    if colors == nil then
+        return 'auto'
+    end
     local set = {
         normal = {
-            a = {bg = colors.blue, fg = colors.base, gui = 'bold'},
-            b = {bg = colors.surface0, fg = colors.text},
-            c = {bg = colors.base, fg = colors.text}
+            a = { bg = colors.blue,     fg = colors.base,     gui = 'bold' },
+            b = { bg = colors.surface0, fg = colors.text },
+            c = { bg = colors.base,     fg = colors.text }
         },
         insert = {
-            a = {bg = colors.green, fg = colors.base, gui = 'bold'},
-            b = {bg = colors.surface0, fg = colors.text},
-            c = {bg = colors.base, fg = colors.text}
+            a = { bg = colors.green,    fg = colors.base,     gui = 'bold' },
+            b = { bg = colors.surface0, fg = colors.text },
+            c = { bg = colors.base,     fg = colors.text }
         },
         visual = {
-            a = {bg = colors.yellow, fg = colors.base, gui = 'bold'},
-            b = {bg = colors.surface0, fg = colors.text},
-            c = {bg = colors.base, fg = colors.text}
+            a = { bg = colors.yellow,   fg = colors.base,     gui = 'bold' },
+            b = { bg = colors.surface0, fg = colors.text },
+            c = { bg = colors.base,     fg = colors.text }
         },
         replace = {
-            a = {bg = colors.red, fg = colors.base, gui = 'bold'},
-            b = {bg = colors.surface0, fg = colors.text},
-            c = {bg = colors.base, fg = colors.text}
+            a = { bg = colors.red,      fg = colors.base,     gui = 'bold' },
+            b = { bg = colors.surface0, fg = colors.text },
+            c = { bg = colors.base,     fg = colors.text }
         },
         command = {
-            a = {bg = colors.peach, fg = colors.base, gui = 'bold'},
-            b = {bg = colors.surface0, fg = colors.text},
-            c = {bg = colors.base, fg = colors.text}
+            a = { bg = colors.peach,    fg = colors.base,     gui = 'bold' },
+            b = { bg = colors.surface0, fg = colors.text },
+            c = { bg = colors.base,     fg = colors.text }
         },
         inactive = {
-            a = {bg = colors.base, fg = colors.surface1, gui = 'bold'},
-            b = {bg = colors.base, fg = colors.surface1},
-            c = {bg = colors.base, fg = colors.surface1}
+            a = { bg = colors.base,     fg = colors.surface1, gui = 'bold' },
+            b = { bg = colors.base,     fg = colors.surface1 },
+            c = { bg = colors.base,     fg = colors.surface1 }
         }
     }
     return set
@@ -316,10 +317,10 @@ function M.lualine()
     require("lualine").setup({
         options = {
             theme = custom_theme,
-            component_separators = {left = '', right = ''},
-            section_separators = {left = '', right = ''},
+            component_separators = { left = '', right = '' },
+            section_separators = { left = '', right = '' },
             globalstatus = true,
-            always_divide_middle = true,
+            always_divide_middle = false,
             disabled_filetypes = {
                 statusline = {},
                 winbar = {},
@@ -329,26 +330,27 @@ function M.lualine()
         },
         sections = {
             lualine_a = {
-                { pad, padding = 0 }
+                { 'mode', separator = { left = "", right = "" } }
             },
             lualine_b = {
                 { 'filetype', icon_only = true, padding = { left = 1, right = 0 } },
-                { 'filename', path = 1 },
+                { 'filename', path = 0 },
             },
             lualine_c = {
-                'branch',
-                'diff'
+                { 'branch' },
+                { 'diff' }
             },
             lualine_x = {
+                { 'searchcount' },
+                { 'selectioncount' },
+                { 'diagnostics' },
                 { lsp_name },
-                'diagnostics',
             },
             lualine_y = {
-                { 'progress',padding = { left = 1, right = 0 } },
-                'location'
+                { 'progress',padding = { left = 1, right = 1 } },
             },
             lualine_z = {
-                { pad, padding = 0 }
+                { 'location', separator = { left = "", right = '' } }
             },
         },
         extensions = {
@@ -387,7 +389,7 @@ function M.bufferline()
                 }
             },
             color_icons = false,
-            separator_style = {' ', ' '},
+            separator_style = { ' ', ' ' },
         },
         highlights = {
         }

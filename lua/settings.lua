@@ -14,13 +14,17 @@ local mappings = function ()
 end
 
 local settings = function ()
-    vim.opt.fillchars:append {eob = " "} -- Removes '~' from empty space
     vim.g.loaded_netrw = 1               -- These are required for Nvim-Tree to
     vim.g.loaded_netrwPlugin = 1         -- function correctly
-    vim.opt.linespace = 0
+
     vim.o.autochdir = false              -- change dir when opening a new file
+    vim.o.completeopt = "menuone,noinsert,noselect"
+    vim.o.shell = "zsh"
+
+    vim.opt.fillchars:append {eob = " "} -- Removes '~' from empty space
     vim.opt.wrap = true                  -- wrap long lines to next row 
     vim.opt.scrolloff = 9                -- how many lines from the cursor to begin scrolling
+    vim.opt.linespace = 0
 
     vim.opt.tabstop = 4                  -- 4 space indenting
     vim.opt.shiftwidth = 4               -- tab -> 4 spaces
@@ -29,20 +33,20 @@ local settings = function ()
     vim.opt.hlsearch = false
     vim.opt.incsearch = true
 
-    vim.opt.number = true                -- Line numbers
+    vim.opt.number = true                -- Line numbers \
     vim.opt.relativenumber = true        -- relative to cursor
-    vim.opt.guicursor = ""
 
+    vim.opt.guicursor = ""
     vim.opt.termguicolors = true         -- Required by many plugins
 
     vim.opt.undofile = true              -- Stores history into a file so you can undo edits from later sessions
     vim.opt.undodir = vim.fn.stdpath("data").."/undodir" -- Path of undofile
 
-    vim.o.completeopt = "menuone,noinsert,noselect"
-    vim.o.shell = "zsh"
-
     vim.opt.title = true
     vim.opt.titlestring = 'nvim %t'
+
+    vim.lsp.set_log_level("error")
+    vim.g.zig_fmt_parse_errors = 0
 end
 
 local autocmd = function ()
@@ -85,8 +89,7 @@ local list = {
 ---Takes a table of strings and executes associated configurations
 ---@param table table
 function M.enable(table)
-    for _, value in pairs(table)
-    do
+    for _, value in pairs(table) do
         if list[value] ~= nil then
             list[value]()
         end
