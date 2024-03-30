@@ -5,44 +5,75 @@ M.gui = {
   { "lukas-reineke/indent-blankline.nvim",
     event = "InsertEnter",
     main = "ibl",
-    opts = {}
+    opts = config.indent
   },
   { "nvim-lualine/lualine.nvim",
     lazy = true,
     event = {"BufReadPre", "InsertEnter", "CmdlineEnter"},
-    config = function() config.lualine() end,
+    opts = config.lualine,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   { "akinsho/bufferline.nvim",
     event = "BufReadPre",
-    config = function() config.bufferline () end,
+    opts = config.bufferline,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   { "goolord/alpha-nvim",
     lazy = false,
-    config = function() config.alpha() end,
+    opts = config.alpha,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   { "SmiteshP/nvim-navic",
-    config = function() config.navic() end,
+    opts = config.navic,
   },
   { "nvim-tree/nvim-tree.lua",
     cmd = "NvimTreeToggle",
     lazy = true,
-    config = function() config.Nvim_tree() end,
+    opts = config.Nvim_tree,
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   { "norcalli/nvim-colorizer.lua",
     event = "VeryLazy",
-    config = function() require('colorizer').setup() end,
+    opts = {},
   },
+  { "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = config.noice,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      { "rcarriga/nvim-notify",
+        config = function ()
+            config.notify()
+        end
+      },
+    }
+  },
+  {
+    "sontungexpt/url-open",
+    event = "VeryLazy",
+    cmd = "URLOpenUnderCursor",
+    opts = {}
+  },
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {}
+  },
+  {
+    "karb94/neoscroll.nvim",
+    opts = {}
+  }
 }
 
 M.core = {
   { "nvim-treesitter/nvim-treesitter",
     event = "VimEnter",
     build = ":TSUpdate",
-    config = function() config.treesitter() end,
+    init = function() config.treesitter() end,
   },
   { "nvim-telescope/telescope.nvim",
     tag = "0.1.2",
@@ -63,7 +94,7 @@ M.lsp = {
   { "williamboman/mason.nvim",
     lazy = false,
     priority = 900,
-    config = function() require("mason").setup() end,
+    opts = {},
     dependencies = {
       { "williamboman/mason-lspconfig.nvim",
         lazy = true,
@@ -73,14 +104,14 @@ M.lsp = {
       },
       { "hrsh7th/cmp-nvim-lsp",
         lazy = true,
-        config = function() config.cmp_nvim_lsp() end
+        init = function() config.cmp_nvim_lsp() end
       },
       { "nvim-lua/lsp-status.nvim" },
     }
   },
   { "hrsh7th/nvim-cmp",
-    event = "InsertEnter",
-    config = function() config.cmp() end,
+    event = "VimEnter",
+    init = function() config.cmp() end,
     dependencies = {
       { "hrsh7th/cmp-buffer" },
       { "hrsh7th/cmp-path" },
@@ -100,11 +131,11 @@ M.lsp = {
   },
   { "lewis6991/gitsigns.nvim",
     event = "BufReadPre",
-    config = function() require("gitsigns").setup() end,
+    opts = {},
   },
   { "folke/trouble.nvim", lazy = true,
     cmd = {"Trouble", "TroubleToggle"},
-    config = function() require("trouble").setup() end,
+    opts = {},
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 }
@@ -119,12 +150,12 @@ M.themes = {
   { "kdheepak/monochrome.nvim", lazy = true },
   { "Yazeed1s/minimal.nvim", lazy = true },
   { "RRethy/nvim-base16", lazy = true },
-  { "catppuccin/nvim", lazy = true, name = "catppuccin" },
+  { "catppuccin/nvim", lazy = true, name = "catppuccin", opts = config.catppuccin },
   { "folke/tokyonight.nvim", lazy = true},
   { "nyoom-engineering/oxocarbon.nvim", lazy = true },
   { "ramojus/mellifluous.nvim",
     lazy = true,
-    config = function() config.mellifluous() end },
+    opts = config.mellifluous },
 }
 
 return M

@@ -20,6 +20,7 @@ local settings = function ()
     vim.o.autochdir = false              -- change dir when opening a new file
     vim.o.completeopt = "menuone,noinsert,noselect"
     vim.o.shell = "zsh"
+    vim.o.cursorline = true
 
     vim.opt.fillchars:append {eob = " "} -- Removes '~' from empty space
     vim.opt.wrap = true                  -- wrap long lines to next row 
@@ -61,6 +62,22 @@ local autocmd = function ()
             if vim.fn.expand("%:e") == "z80" then
                 vim.cmd[[:set filetype=nasm]]
             end
+        end
+    })
+    autocmd("FileType", {
+        desc = "Try to use otter.nvim in markdown files.",
+        pattern = "markdown",
+        group = augroup("otter", { clear = true }),
+        callback = function ()
+            require("otter").activate()
+        end
+    })
+    autocmd("VimLeave", {
+        desc = "Tells all LSP clients to stop before exiting nvim",
+        pattern = "*",
+        group = augroup("Cleanup", { clear = true }),
+        callback = function()
+            vim.lsp.stop_client(vim.lsp.get_clients())
         end
     })
 end
